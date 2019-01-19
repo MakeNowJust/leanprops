@@ -1,0 +1,12 @@
+{
+  "docs": {
+    "Getting Started": [
+      "overview",
+      "example"
+    ],
+    "Modules": [
+      "leanprops-core",
+      "leanprops-magnolia"
+    ]
+  }
+}

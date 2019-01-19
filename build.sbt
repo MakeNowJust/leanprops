@@ -50,3 +50,13 @@ lazy val magnolia = (project in file("modules/magnolia"))
     testSettings
   )
   .dependsOn(core)
+
+lazy val docs = (project in file("website"))
+  .settings(
+    moduleName := "leanprops-docs",
+    mdocVariables := Map(
+      "VERSION" -> version.value
+    )
+  )
+  .enablePlugins(MdocPlugin, DocusaurusPlugin)
+  .dependsOn(core, magnolia)

@@ -1,12 +1,6 @@
-# Leanprops
+# LeanProps
 
-Leanprops is a simple enumerative property-based testing library.
-Some features and concepts are ported from Haskell [LeanCheck][] library.
-
-## Modules
-
- - [core](./modules/core)
- - [magnolia](./modules/magnolia)
+LeanProps is a simple enumerative property-based testing library.
 
 ## License
 
