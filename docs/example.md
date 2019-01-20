@@ -3,7 +3,7 @@ id: example
 title: One-Minute Example
 ---
 
-To run this example, you should [install](./installation.md) `leanprops-core` to your project.
+To run this example, `leanprops-core` installation is needed.
 
 ```scala mdoc
 import codes.quine.leanprops._
