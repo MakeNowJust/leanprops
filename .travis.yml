@@ -1,9 +1,17 @@
 language: scala
 jdk: openjdk11
 
-before_script:
-  - cd website && yarn install --frozen-lockfile && cd ..
+stages:
+  - name: test
+  - name: release
+    if: (branch = master AND type = push)
 
-script:
-  - sbt ++$TRAVIS_SCALA_VERSION scalafmt/test test:scalafmt/test sbt:scalafmt/test
-  - sbt ++$TRAVIS_SCALA_VERSION test
+jobs:
+  include:
+    - before_script:
+        - cd website && yarn install --frozen-lockfile && cd ..
+      script:
+        - sbt ++$TRAVIS_SCALA_VERSION scalafmt/test test:scalafmt/test sbt:scalafmt/test test
+    - stage: release
+      script:
+        - sbt ++$TRAVIS_SCALA_VERSION docs/docusaurusPublishGhpages
