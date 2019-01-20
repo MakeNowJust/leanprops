@@ -62,7 +62,8 @@ lazy val docs = (project in file("website"))
     },
     scalafmt / test := {
       val exitCode = Process("yarn lint", Option(baseDirectory.value)) ! streams.value.log
-      if (exitCode != 0) throw new Exception(s"Process returned exit code: $exitCode")
+      if (exitCode != 0)
+        throw new Exception(s"Process returned exit code: $exitCode")
     }
   )
   .enablePlugins(MdocPlugin, DocusaurusPlugin)
