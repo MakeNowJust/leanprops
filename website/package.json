@@ -6,8 +6,8 @@
     "write-translations": "docusaurus-write-translations",
     "version": "docusaurus-version",
     "rename-version": "docusaurus-rename-version",
-    "format": "cd .. && prettier --write --ignore-path .gitignore '**/*.{js,json,md}'",
-    "lint": "cd .. && prettier --list-different --ignore-path .gitignore '**/*.{js,json,md}'"
+    "format": "cd .. && prettier --write --ignore-path .gitignore '**/*.{js,json,md,yml}'",
+    "lint": "cd .. && prettier --list-different --ignore-path .gitignore '**/*.{js,json,md,yml}'"
   },
   "devDependencies": {
     "docusaurus": "^1.6.2",
