@@ -2,7 +2,7 @@ language: scala
 jdk: openjdk11
 
 before_script:
-  - cd website && yarn install --frozen-lockfile
+  - cd website && yarn install --frozen-lockfile && cd ..
 
 script:
   - sbt ++$TRAVIS_SCALA_VERSION scalafmt/test test:scalafmt/test sbt:scalafmt/test
