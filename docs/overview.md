@@ -32,5 +32,5 @@ You can use your type in properties for free.
 
 See [details](./leanprops-magnolia.md).
 
-[LeanCheck]: https://github.com/rudymatela/leancheck
-[Magnolia]: https://propensive.com/opensource/magnolia/
+[leancheck]: https://github.com/rudymatela/leancheck
+[magnolia]: https://propensive.com/opensource/magnolia/

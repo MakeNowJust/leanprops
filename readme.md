@@ -8,5 +8,5 @@ MIT
 
 (C) 2019 TSUYUSATO "[MakeNowJust][]" Kitsune
 
-[LeanCheck]: https://github.com/rudymatela/leancheck
-[MakeNowJust]: https://github.com/MakeNowJust
+[leancheck]: https://github.com/rudymatela/leancheck
+[makenowjust]: https://github.com/MakeNowJust

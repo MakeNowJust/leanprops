@@ -1,35 +1,33 @@
 const siteConfig = {
-  title: 'LeanProps',
-  tagline: 'Simple enumerative property-based testing for Scala',
-  url: 'https://makenowjust.github.com',
-  baseUrl: '/leanprops/',
+  title: "LeanProps",
+  tagline: "Simple enumerative property-based testing for Scala",
+  url: "https://makenowjust.github.com",
+  baseUrl: "/leanprops/",
 
-  projectName: 'leanprops',
-  organizationName: 'MakeNowJust',
+  projectName: "leanprops",
+  organizationName: "MakeNowJust",
 
-  headerLinks: [
-    {doc: 'overview', label: 'Docs'},
-  ],
+  headerLinks: [{ doc: "overview", label: "Docs" }],
 
   colors: {
-    primaryColor: '#8E2555',
-    secondaryColor: '#205C3B',
+    primaryColor: "#8E2555",
+    secondaryColor: "#205C3B"
   },
 
-  customDocsPath: 'website/target/mdoc',
+  customDocsPath: "website/target/mdoc",
 
   copyright: `(C) ${new Date().getFullYear()} TSUYUSATO "MakeNowJust" Kitsune`,
 
   highlight: {
-    theme: 'default',
+    theme: "default"
   },
 
   scripts: [],
-  onPageNav: 'separate',
+  onPageNav: "separate",
   cleanUrl: true,
 
-  ogImage: 'img/docusaurus.png',
-  twitterImage: 'img/docusaurus.png',
+  ogImage: "img/docusaurus.png",
+  twitterImage: "img/docusaurus.png"
 };
 
 module.exports = siteConfig;

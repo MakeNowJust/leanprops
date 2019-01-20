@@ -38,4 +38,4 @@ Listable.list[Tree[Int]].take(10)
 print(inspect(Branch(Leaf(1), Leaf(2))))
 ```
 
-[Magnolia]: https://propensive.com/opensource/magnolia/
+[magnolia]: https://propensive.com/opensource/magnolia/

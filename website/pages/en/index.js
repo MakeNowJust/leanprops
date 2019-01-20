@@ -1,16 +1,16 @@
-const React = require('react');
+const React = require("react");
 
-const CompLibrary = require('../../core/CompLibrary.js');
+const CompLibrary = require("../../core/CompLibrary.js");
 
 const Container = CompLibrary.Container;
 const GridBlock = CompLibrary.GridBlock;
 
 class HomeSplash extends React.Component {
   render() {
-    const {siteConfig, language = ''} = this.props;
-    const {baseUrl, docsUrl} = siteConfig;
-    const docsPart = `${docsUrl ? `${docsUrl}/` : ''}`;
-    const langPart = `${language ? `${language}/` : ''}`;
+    const { siteConfig, language = "" } = this.props;
+    const { baseUrl, docsUrl } = siteConfig;
+    const docsPart = `${docsUrl ? `${docsUrl}/` : ""}`;
+    const langPart = `${language ? `${language}/` : ""}`;
     const docUrl = doc => `${baseUrl}${docsPart}${langPart}${doc}`;
 
     const SplashContainer = props => (
@@ -49,7 +49,7 @@ class HomeSplash extends React.Component {
         <div className="inner">
           <ProjectTitle siteConfig={siteConfig} />
           <PromoSection>
-            <Button href={docUrl('overview')}>Get Started</Button>
+            <Button href={docUrl("overview")}>Get Started</Button>
           </PromoSection>
         </div>
       </SplashContainer>
@@ -59,14 +59,15 @@ class HomeSplash extends React.Component {
 
 class Index extends React.Component {
   render() {
-    const {config: siteConfig, language = ''} = this.props;
-    const {baseUrl} = siteConfig;
+    const { config: siteConfig, language = "" } = this.props;
+    const { baseUrl } = siteConfig;
 
     const Block = props => (
       <Container
-        padding={['bottom', 'top']}
+        padding={["bottom", "top"]}
         id={props.id}
-        background={props.background}>
+        background={props.background}
+      >
         <GridBlock
           align="center"
           contents={props.children}
@@ -79,21 +80,21 @@ class Index extends React.Component {
       <Block layout="fourColumn">
         {[
           {
-            title: 'Simple',
+            title: "Simple",
             content: `
               LeanProps provides a way to list allmost all possible values in respect to a type.
               For example, you can use \`Listable.list[Int]\` to get all possible \`Int\` values, then you can observe how a property works aginst first N-elements of these values.
               Of course, it is too low-level and LeanProps provides high-level APIs for daily use.
-            `.replace(/^\s*/gm, ''),
+            `.replace(/^\s*/gm, "")
           },
           {
-            title: 'Pretty Inspect',
+            title: "Pretty Inspect",
             content: `
               LeanProps also provides \`inspect\` function.
               \`inspect\` works as like Ruby's one or Haskell's \`show\`: it shows a string representation of a value.
               In addition, LeanProps \`inspect\` can show a function with its extension, powered by \`Listable\`.
-            `.replace(/^\s*/gm, ''),
-          },
+            `.replace(/^\s*/gm, "")
+          }
         ]}
       </Block>
     );
