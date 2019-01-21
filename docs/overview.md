@@ -7,6 +7,10 @@ LeanProps is a simple enumerative property-based testing library.
 
 Some features and concepts is ported from Haskell's [LeanCheck][] library.
 
+## Warning
+
+> This project is under development. It has no stable version for now, and some API might be changed.
+
 ## Features
 
 1. Lists all possible values in respect to a type.

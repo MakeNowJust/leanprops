@@ -7,19 +7,27 @@ title: leanprops-core
 
 It provides some important classes and traits: `Tiers[A]`, `Listable[A]` and `Inspectable[A]`.
 
-<!--
+## Installation
 
-# Installation
+### Stable
 
-> TODO: LeanProps is not published for now....
+Unfortunately LeanProps has no stable version...
+
+### HEAD
 
 Add this line into your `build.sbt`:
 
 ```scala
-libraryDependencies += "codes.quine" % "leanprops-core" % "@VERSION@"
+lazy val leanpropsCoreRef = ProjectRef(uri("git://github.com/MakeNowJust/leanprops.git"), "core")
 ```
 
--->
+Then, add `.dependsOn(...)` into your project definition:
+
+```scala
+lazy val root = (project in file("."))
+  .dependsOn(leanpropsCoreRef)
+  // ...
+```
 
 ## Usage
 

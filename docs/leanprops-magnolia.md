@@ -5,19 +5,27 @@ title: leanprops-magnolia
 
 `leanprops-magnolia` is [Magnolia] integration to LeanProps.
 
-<!--
+## Installation
 
-# Installation
+### Stable
 
-> TODO: LeanProps is not published for now....
+Unfortunately LeanProps has no stable version...
+
+### HEAD
 
 Add this line into your `build.sbt`:
 
 ```scala
-libraryDependencies += "codes.quine" % "leanprops-magnolia" % "@VERSION@"
+lazy val leanpropsMagnoliaRef = ProjectRef(uri("git://github.com/MakeNowJust/leanprops.git"), "magnolia")
 ```
 
--->
+Then, add `.dependsOn(...)` into your project definition:
+
+```scala
+lazy val root = (project in file("."))
+  .dependsOn(leanpropsMagnoliaRef)
+  // ...
+```
 
 ## Usage
 
