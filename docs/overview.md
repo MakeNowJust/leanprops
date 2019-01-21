@@ -7,15 +7,15 @@ LeanProps is a simple enumerative property-based testing library.
 
 Some features and concepts is ported from Haskell's [LeanCheck][] library.
 
-# Features
+## Features
 
 1. Lists all possible values in respect to a type.
 2. `inspect` - better `toString`. It can show a function value, powered by listing.
 3. Tests a property. When a counter-example of the property is found, LeanProps shows it with `inspect`.
 
-# Modules
+## Modules
 
-## `leanprops-core`
+### `leanprops-core`
 
 `lesnprops-core` is core of this library.
 
@@ -23,7 +23,7 @@ It provides some important classes and traits: `Tiers[A]`, `Listable[A]` and `In
 
 See [details](./leanprops-core.md).
 
-## `leanprops-magnolia`
+### `leanprops-magnolia`
 
 `leanprops-magnolia` is [Magnolia] integration to LeanProps.
 

@@ -21,7 +21,7 @@ libraryDependencies += "codes.quine" % "leanprops-core" % "@VERSION@"
 
 -->
 
-# Usage
+## Usage
 
 All examples need to import `codes.quine.leanprops` of course:
 

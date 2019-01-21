@@ -19,7 +19,7 @@ libraryDependencies += "codes.quine" % "leanprops-magnolia" % "@VERSION@"
 
 -->
 
-# Usage
+## Usage
 
 `import codes.quine.leanprops.magnolia._` is needed to derive `Listable` and `Inspectable` instances.
 
