@@ -113,4 +113,76 @@ package object leanprops {
     */
   def exists[A: Testable](n: Int)(p: A): Boolean =
     Testable.results[A](p).take(n).exists(_.isOk)
+
+  /** Formats list of strings which `counterExample` and `witness` returns.
+    *
+    * {{{
+    * scala> formatValues(Seq(Seq("true")))
+    * res0: String = true
+    *
+    * scala> formatValues(Seq(Seq("true", "false"), Seq("1")))
+    * res1: String = (true, false)(1)
+    *
+    * scala> formatValues(Seq.empty)
+    * res2: String = ()
+    * }}}
+    */
+  def formatValues(vs: Seq[Seq[String]]): String = vs match {
+    case Seq(Seq(v)) => v
+    case _           => vs.map(_.mkString(", ")).mkString("(", ")(", ")")
+  }
+
+  /** Checks the given property and throws a `ChecksError` with the first counter example if counter examples are found.
+    *
+    * {{{
+    * scala> try { check(20) { (xs: List[Int]) => xs.sorted == xs }; "succeeded" }
+    *      | catch { case e: CheckError => e.message }
+    * res0: String = the given property failed on following argument(s): List(1, 0)
+    * }}}
+    *
+    * @throws CheckError when counter examples are found
+    */
+  def check[A: Testable](n: Int)(p: A): Unit = counterExample(n)(p) match {
+    case None => ()
+    case Some(vs) => {
+      val args = formatValues(vs)
+      val message =
+        s"the given property failed on following argument(s): $args"
+      throw CheckError(message, vs)
+    }
+  }
+
+  case class CheckError(message: String, counterExample: Seq[Seq[String]])
+      extends AssertionError(message)
+
+  /** Checks the given property and throws a `ChecksError` if counter examples are found.
+    *
+    * {{{
+    * scala> try { checks(20) { (xs: List[Int]) => xs.sorted == xs }; "succeeded" }
+    *      | catch { case e: ChecksError => e.message }
+    * res0: String =
+    * the given property failed on following argument(s):
+    *   - List(1, 0)
+    *   - List(0, 1, 0)
+    *   - List(0, -1)
+    *   - List(1, 0, 0)
+    *   - List(0, 0, 1, 0)
+    *   - List(0, 0, -1)
+    * }}}
+    *
+    * @throws ChecksError when counter examples are found
+    */
+  def checks[A: Testable](n: Int)(p: A): Unit = counterExamples(n)(p) match {
+    case Nil => ()
+    case vss => {
+      val lines = vss.map(vs => s"  - ${formatValues(vs)}").mkString("\n")
+      val message =
+        s"the given property failed on following argument(s):\n$lines"
+      throw ChecksError(message, vss)
+    }
+  }
+
+  case class ChecksError(message: String,
+                         counterExamples: Seq[Seq[Seq[String]]])
+      extends AssertionError(message)
 }
