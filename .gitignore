@@ -1,4 +1,7 @@
+*.log
+
 target/
 .idea/
+.ensime*
 
 node_modules/
