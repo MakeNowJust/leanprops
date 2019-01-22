@@ -84,10 +84,10 @@ object WithInspectConfig {
   def inspects[A: Inspectable](xs: Seq[A]): WithInspectConfig[Seq[String]] =
     inner(WithInspectConfig(c => xs.map(x => inspect(x).run(c))))
 
-  def lift[A](xs: Seq[WithInspectConfig[A]]): WithInspectConfig[Seq[A]] =
+  def sequence[A](xs: Seq[WithInspectConfig[A]]): WithInspectConfig[Seq[A]] =
     WithInspectConfig(c => xs.map(_.run(c)))
 
-  def liftBinding[A](
+  def sequenceBinding[A](
       b: Binding[WithInspectConfig[A]]): WithInspectConfig[Binding[A]] =
     b match {
       case Binding(vs, r) =>
@@ -95,17 +95,17 @@ object WithInspectConfig {
           c => Binding(vs.map(_.map(_.run(c))), r.map(_.run(c))))
     }
 
-  def liftBindings[A](bs: Seq[Binding[WithInspectConfig[A]]])
-    : WithInspectConfig[Seq[Binding[A]]] = lift(bs.map(liftBinding))
+  def sequenceBindings[A](bs: Seq[Binding[WithInspectConfig[A]]])
+    : WithInspectConfig[Seq[Binding[A]]] = sequence(bs.map(sequenceBinding))
 
-  def liftResult[A](
+  def sequenceResult[A](
       r: Result[WithInspectConfig[A]]): WithInspectConfig[Result[A]] = r match {
     case Result(vs, ok) =>
       WithInspectConfig(c => Result(vs.map(_.map(_.run(c))), ok))
   }
 
-  def liftResults[A](rs: Seq[Result[WithInspectConfig[A]]])
-    : WithInspectConfig[Seq[Result[A]]] = lift(rs.map(liftResult))
+  def sequenceResults[A](rs: Seq[Result[WithInspectConfig[A]]])
+    : WithInspectConfig[Seq[Result[A]]] = sequence(rs.map(sequenceResult))
 
   def cons0[A](name: String): WithInspectConfig[String] = pure(name)
 

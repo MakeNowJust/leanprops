@@ -20,7 +20,7 @@ package object magnolia extends PerspectiveImplicits {
             ctx.parameters.map(p =>
               p.typeclass.inspectable.inspect(p.dereference(v)))
           WithInspectConfig
-            .lift(ss)
+            .sequence(ss)
             .map(_.mkString(ctx.typeName.short ++ "(", ", ", ")"))
         }
       }

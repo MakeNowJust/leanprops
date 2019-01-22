@@ -132,7 +132,8 @@ private[leanprops] trait InspectableInstances {
   implicit def MapInspectable[A: Inspectable, B: Inspectable]
     : Inspectable[Map[A, B]] =
     fromInspect { m =>
-      lift(m.map { case (x, y) => inspect2(x, y)((s, t) => s"$s -> $t") }.toSeq)
+      sequence(
+        m.map { case (x, y) => inspect2(x, y)((s, t) => s"$s -> $t") }.toSeq)
         .map(_.mkString("Map(", ", ", ")"))
     }
 
@@ -170,7 +171,7 @@ private[leanprops] trait InspectableInstances {
       for {
         c <- readConfig
         more = if (xs.asStream.drop(c.size).nonEmpty) ", ..." else ""
-        ss <- lift(
+        ss <- sequence(
           xs.asStream
             .take(c.size)
             .map(x => inspects(x).map(_.mkString("Seq(", ", ", ")"))))
@@ -265,7 +266,7 @@ private[leanprops] trait InspectableFunctionInstance {
       f: F): WithInspectConfig[String] =
     for {
       config <- readConfig
-      bs     <- inner(liftBindings(bindings(f))).map(_.toStream)
+      bs     <- inner(sequenceBindings(bindings(f))).map(_.toStream)
     } yield {
       val checks = config.size * config.size + 1
       if (isValue(bs)) inspectValue(bs)

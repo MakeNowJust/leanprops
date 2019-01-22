@@ -33,7 +33,7 @@ package object leanprops {
     */
   def counterExamples[A: Testable](n: Int)(p: A): Seq[Seq[Seq[String]]] =
     WithInspectConfig
-      .liftResults(Testable.results[A](p).take(n).filterNot(_.isOk))
+      .sequenceResults(Testable.results[A](p).take(n).filterNot(_.isOk))
       .run(InspectConfig.FourCases)
       .map(_.values)
 
@@ -59,7 +59,7 @@ package object leanprops {
     */
   def witnesses[A: Testable](n: Int)(p: A): Seq[Seq[Seq[String]]] =
     WithInspectConfig
-      .liftResults(Testable.results[A](p).take(n).filter(_.isOk))
+      .sequenceResults(Testable.results[A](p).take(n).filter(_.isOk))
       .run(InspectConfig.FourCases)
       .map(_.values)
 
