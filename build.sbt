@@ -31,8 +31,7 @@ ThisBuild / scalacOptions ++= Seq(
 lazy val testSettings = Seq(
   libraryDependencies += "com.lihaoyi" %% "utest" % "0.6.6" % Test,
   testFrameworks += new TestFramework("utest.runner.Framework"),
-  doctestTestFramework := DoctestTestFramework.MicroTest,
-  coverageEnabled := true
+  doctestTestFramework := DoctestTestFramework.MicroTest
 )
 
 lazy val root = (project in file("."))
