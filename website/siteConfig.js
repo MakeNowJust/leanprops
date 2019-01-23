@@ -9,7 +9,7 @@ const siteConfig = {
 
   headerLinks: [
     { doc: "overview", label: "Docs" },
-    { href: "https://github.com/MakeNowJust/leanprops", label: 'GitHub' }
+    { href: "https://github.com/MakeNowJust/leanprops", label: "GitHub" }
   ],
 
   colors: {
