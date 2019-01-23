@@ -50,6 +50,7 @@ class HomeSplash extends React.Component {
           <ProjectTitle siteConfig={siteConfig} />
           <PromoSection>
             <Button href={docUrl("overview")}>Get Started</Button>
+            <Button href="https://github.com/MakeNowJust/leanprops">Source Code</Button>
           </PromoSection>
         </div>
       </SplashContainer>

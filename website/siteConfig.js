@@ -7,11 +7,14 @@ const siteConfig = {
   projectName: "leanprops",
   organizationName: "MakeNowJust",
 
-  headerLinks: [{ doc: "overview", label: "Docs" }],
+  headerLinks: [
+    { doc: "overview", label: "Docs" },
+    { href: "https://github.com/MakeNowJust/leanprops", label: 'GitHub' }
+  ],
 
   colors: {
     primaryColor: "#8E2555",
-    secondaryColor: "#205C3B"
+    secondaryColor: "#5C203B"
   },
 
   customDocsPath: "website/target/mdoc",
