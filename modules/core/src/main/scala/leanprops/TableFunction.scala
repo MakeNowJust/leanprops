@@ -1,4 +1,4 @@
-package codes.quine.leanprops
+package leanprops
 
 private[leanprops] final case class TableFunction1[A, R](map: Map[A, R],
                                                          default: R)

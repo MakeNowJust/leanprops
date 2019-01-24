@@ -1,4 +1,4 @@
-package codes.quine.leanprops
+package leanprops
 
 import scala.util.{Try, Success, Failure}
 

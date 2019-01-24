@@ -6,7 +6,7 @@ title: One-Minute Example
 To run this example, `leanprops-core` installation is needed.
 
 ```scala mdoc
-import codes.quine.leanprops._
+import leanprops._
 
 // A small utility function to `inspect` a value in one-line.
 def inspect4[A: Inspectable](x: A): String =

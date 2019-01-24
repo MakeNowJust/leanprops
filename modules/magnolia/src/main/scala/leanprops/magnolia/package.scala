@@ -1,4 +1,4 @@
-package codes.quine.leanprops
+package leanprops
 
 import _root_.magnolia.{CaseClass, Magnolia, SealedTrait}
 

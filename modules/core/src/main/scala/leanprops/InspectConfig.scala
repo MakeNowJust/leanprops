@@ -1,4 +1,4 @@
-package codes.quine.leanprops
+package leanprops
 
 /** `InspectConfig` haves a configuration for `inspect` method.
   *   - `size` means a number of showing size of elements of '''infinite''' collection, or cases of function.

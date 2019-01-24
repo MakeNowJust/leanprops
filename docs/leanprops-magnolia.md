@@ -32,7 +32,7 @@ lazy val root = (project in file("."))
 `import codes.quine.leanprops.magnolia._` is needed to derive `Listable` and `Inspectable` instances.
 
 ```scala mdoc
-import codes.quine.leanprops._, magnolia._
+import leanprops._, magnolia._
 
 // Defines `Tree` ADT.
 sealed trait Tree[A]

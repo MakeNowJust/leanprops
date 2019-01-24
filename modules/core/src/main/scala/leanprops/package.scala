@@ -1,6 +1,3 @@
-package codes
-package quine
-
 package object leanprops {
 
   /** Inspects `Inspectable` value, or better `toString`.

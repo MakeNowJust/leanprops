@@ -1,4 +1,4 @@
-package codes.quine.leanprops
+package leanprops
 package magnolia
 
 trait Perspective[A] {

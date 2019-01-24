@@ -34,7 +34,7 @@ lazy val root = (project in file("."))
 All examples need to import `codes.quine.leanprops` of course:
 
 ```scala mdoc
-import codes.quine.leanprops._
+import leanprops._
 ```
 
 When you have a property `p` that is a function returns `Boolean` value, then `holds(100)(p)` tests `p` against first 100 possible arguments.

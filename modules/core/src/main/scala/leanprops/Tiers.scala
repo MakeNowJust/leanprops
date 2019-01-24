@@ -1,4 +1,4 @@
-package codes.quine.leanprops
+package leanprops
 
 /** A wrapper class of `Stream[Seq[A]]`. It provides some utility operators.
   *
