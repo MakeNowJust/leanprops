@@ -55,8 +55,8 @@ lazy val cats = (project in file("modules/cats"))
     name := "leanprops-cats",
     libraryDependencies += "org.typelevel" %% "cats-core" % "1.5.0",
     testSettings,
-    libraryDependencies += "org.typelevel" %% "cats-laws" % "1.5.0" % Test,
-    libraryDependencies += "org.typelevel" %% "cats-testkit" % "1.5.0" % Test,
+    libraryDependencies += "org.typelevel" %% "cats-laws"    % "1.5.0" % Test,
+    libraryDependencies += "org.typelevel" %% "cats-testkit" % "1.5.0" % Test
   )
   .dependsOn(core)
 

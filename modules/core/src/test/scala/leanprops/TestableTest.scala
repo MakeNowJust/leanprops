@@ -15,10 +15,8 @@ object TestableTest extends TestSuite {
     }
 
     'function1 - {
-      'identity - assert(
-        counterExample(10)((x: Boolean) => x).contains(Seq(Seq("false"))))
-      'not - assert(
-        counterExample(10)((x: Boolean) => !x).contains(Seq(Seq("true"))))
+      'identity - assert(counterExample(10)((x: Boolean) => x).contains(Seq(Seq("false"))))
+      'not - assert(counterExample(10)((x: Boolean) => !x).contains(Seq(Seq("true"))))
     }
 
     'function2 - assert(
@@ -30,14 +28,11 @@ object TestableTest extends TestSuite {
         .contains(Seq(Seq("true", "true", "false"))))
 
     'function4 - assert(
-      counterExample(10)((x: Boolean, y: Boolean, z: Boolean, w: Boolean) =>
-        x && y && z && w)
+      counterExample(10)((x: Boolean, y: Boolean, z: Boolean, w: Boolean) => x && y && z && w)
         .contains(Seq(Seq("true", "true", "true", "false"))))
 
     'function5 - assert(
-      counterExample(10)(
-        (x: Boolean, y: Boolean, z: Boolean, w: Boolean, x1: Boolean) =>
-          x && y && z && w && x1)
+      counterExample(10)((x: Boolean, y: Boolean, z: Boolean, w: Boolean, x1: Boolean) => x && y && z && w && x1)
         .contains(Seq(Seq("true", "true", "true", "true", "false"))))
   }
 }

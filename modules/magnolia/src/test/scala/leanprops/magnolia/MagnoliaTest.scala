@@ -128,8 +128,7 @@ object MagnoliaTest extends TestSuite {
       'inspectable - {
         'tip - assert(inspect(Tip) == "Tip")
         'leaf - assert(inspect(Leaf(1)) == "Leaf(1)")
-        'branch - assert(
-          inspect(Branch(Tip, Leaf(1))) == "Branch(Tip, Leaf(1))")
+        'branch - assert(inspect(Branch(Tip, Leaf(1))) == "Branch(Tip, Leaf(1))")
       }
     }
 
@@ -140,12 +139,7 @@ object MagnoliaTest extends TestSuite {
         val actual = Listable[X[Int]].tiers.asStream.take(3).toList
         val expected = List(List(X2(0, 0)),
                             List(X1(X2(0, 0)), X2(0, 1), X2(1, 0)),
-                            List(X1(X1(X2(0, 0))),
-                                 X1(X2(0, 1)),
-                                 X1(X2(1, 0)),
-                                 X2(0, -1),
-                                 X2(1, 1),
-                                 X2(-1, 0)))
+                            List(X1(X1(X2(0, 0))), X1(X2(0, 1)), X1(X2(1, 0)), X2(0, -1), X2(1, 1), X2(-1, 0)))
         assert(actual == expected)
       }
 

@@ -43,8 +43,7 @@ object InspectableTest extends TestSuite {
       'tuple2 - assert(inspect((true, 1)) == "(true, 1)")
       'tuple3 - assert(inspect((true, 1, false)) == "(true, 1, false)")
       'tuple4 - assert(inspect((true, 1, false, 2)) == "(true, 1, false, 2)")
-      'tuple5 - assert(
-        inspect((true, 1, false, 2, true)) == "(true, 1, false, 2, true)")
+      'tuple5 - assert(inspect((true, 1, false, 2, true)) == "(true, 1, false, 2, true)")
     }
 
     'list - {
@@ -62,10 +61,8 @@ object InspectableTest extends TestSuite {
       'finite - assert(inspect(Stream(1, 2, 3)) == "Stream(1, 2, 3)")
       'infinite - {
         'four - assert(inspect4(Stream.from(1)) == "Stream(1, 2, 3, 4, ...)")
-        'eight - assert(
-          inspect(Stream.from(1)) == "Stream(1, 2, 3, 4, 5, 6, 7, 8, ...)")
-        'nested - assert(
-          inspect(Stream(Stream.from(1))) == "Stream(Stream(1, 2, 3, 4, ...))")
+        'eight - assert(inspect(Stream.from(1)) == "Stream(1, 2, 3, 4, 5, 6, 7, 8, ...)")
+        'nested - assert(inspect(Stream(Stream.from(1))) == "Stream(Stream(1, 2, 3, 4, ...))")
       }
     }
 
@@ -76,8 +73,7 @@ object InspectableTest extends TestSuite {
 
     'map - {
       'empty - assert(inspect(Map.empty[Int, Boolean]) == "Map()")
-      'nonEmpty - assert(
-        inspect(Map(1 -> true, 2 -> false)) == "Map(1 -> true, 2 -> false)")
+      'nonEmpty - assert(inspect(Map(1 -> true, 2 -> false)) == "Map(1 -> true, 2 -> false)")
     }
 
     'char - {
@@ -89,11 +85,9 @@ object InspectableTest extends TestSuite {
     'string - assert(inspect("hello\tworld\r\n") == "\"hello\\tworld\\r\\n\"")
 
     'tiers - {
-      'small - assert(
-        inspect(Tiers(Seq(1, 2, 3), Seq(4, 5, 6))) == "Tiers(Seq(1, 2, 3), Seq(4, 5, 6))")
+      'small - assert(inspect(Tiers(Seq(1, 2, 3), Seq(4, 5, 6))) == "Tiers(Seq(1, 2, 3), Seq(4, 5, 6))")
       'infinite - {
-        'four - assert(
-          inspect4(Tiers.fromList(Stream.from(1))) == "Tiers(Seq(1), Seq(2), Seq(3), Seq(4), ...)")
+        'four - assert(inspect4(Tiers.fromList(Stream.from(1))) == "Tiers(Seq(1), Seq(2), Seq(3), Seq(4), ...)")
         'eight - assert(
           inspect(Tiers.fromList(Stream.from(1))) == "Tiers(Seq(1), Seq(2), Seq(3), Seq(4), Seq(5), Seq(6), Seq(7), Seq(8), ...)")
       }
@@ -236,8 +230,7 @@ object InspectableTest extends TestSuite {
       'function4 - {
         'andOrAnd - {
           val actual =
-            inspect((x: Boolean, y: Boolean, z: Boolean, w: Boolean) =>
-              x && y || z && w)
+            inspect((x: Boolean, y: Boolean, z: Boolean, w: Boolean) => x && y || z && w)
           val expected =
             """((x, y, z, w) => (x, y, z, w) match {
               |  case (_, _, true, true) => true
@@ -252,9 +245,7 @@ object InspectableTest extends TestSuite {
       'function5 - {
         'andOrAndOr - {
           val actual =
-            inspect(
-              (x: Boolean, y: Boolean, z: Boolean, w: Boolean, x1: Boolean) =>
-                x && y || z && w || x1)
+            inspect((x: Boolean, y: Boolean, z: Boolean, w: Boolean, x1: Boolean) => x && y || z && w || x1)
           val expected =
             """((x, y, z, w, x1) => (x, y, z, w, x1) match {
               |  case (_, _, _, _, true)    => true
