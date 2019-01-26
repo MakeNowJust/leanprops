@@ -39,9 +39,8 @@ object Listable {
   //
   // Finite enum:
 
-  implicit val UnitListable: Listable[Unit] = from(cons0(()))
-  implicit val BooleanListable: Listable[Boolean] = from(
-    cons0(true) \++/ cons0(false))
+  implicit val UnitListable: Listable[Unit]       = from(cons0(()))
+  implicit val BooleanListable: Listable[Boolean] = from(cons0(true) \++/ cons0(false))
 
   //
   // Integral:
@@ -64,8 +63,7 @@ object Listable {
   //
   // Fractional:
 
-  private[this] def tiersFractional[A](
-      implicit frac: Fractional[A]): Tiers[A] = {
+  private[this] def tiersFractional[A](implicit frac: Fractional[A]): Tiers[A] = {
     import frac._
 
     @tailrec
@@ -83,10 +81,9 @@ object Listable {
     tiersFractional[A] \++/ Tiers(Stream(Seq(), Seq(), Seq(inf), Seq(-inf)))
   }
 
-  implicit val FloatListable: Listable[Float]   = from(tiersFloating[Float])
-  implicit val DoubleListable: Listable[Double] = from(tiersFloating[Double])
-  implicit val BigDecimalListable: Listable[BigDecimal] = from(
-    tiersFractional[BigDecimal])
+  implicit val FloatListable: Listable[Float]           = from(tiersFloating[Float])
+  implicit val DoubleListable: Listable[Double]         = from(tiersFloating[Double])
+  implicit val BigDecimalListable: Listable[BigDecimal] = from(tiersFractional[BigDecimal])
 
   //
   // Data structure:
@@ -94,11 +91,8 @@ object Listable {
   implicit def OptionListable[A: Listable]: Listable[Option[A]] =
     from(cons0[Option[A]](None) \++/ cons1[A, Option[A]](Some(_)))
 
-  implicit def EitherListable[A: Listable, B: Listable]
-    : Listable[Either[A, B]] =
-    from(
-      reset(cons1[A, Either[A, B]](Left(_))) \+|/ reset(
-        cons1[B, Either[A, B]](Right(_))))
+  implicit def EitherListable[A: Listable, B: Listable]: Listable[Either[A, B]] =
+    from(reset(cons1[A, Either[A, B]](Left(_))) \+|/ reset(cons1[B, Either[A, B]](Right(_))))
 
   //
   // Tuple:
@@ -107,21 +101,14 @@ object Listable {
     from(cons1[A, Tuple1[A]](Tuple1[A]))
   implicit def Tuple2Listable[A: Listable, B: Listable]: Listable[(A, B)] =
     from(tiers[A] >< tiers[B])
-  implicit def Tuple3Listable[A: Listable, B: Listable, C: Listable]
-    : Listable[(A, B, C)] =
+  implicit def Tuple3Listable[A: Listable, B: Listable, C: Listable]: Listable[(A, B, C)] =
     from(reset(cons2[(A, B), C, (A, B, C)] { case ((a, b), c) => (a, b, c) }))
-  implicit def Tuple4Listable[A: Listable,
-                              B: Listable,
-                              C: Listable,
-                              D: Listable]: Listable[(A, B, C, D)] =
+  implicit def Tuple4Listable[A: Listable, B: Listable, C: Listable, D: Listable]: Listable[(A, B, C, D)] =
     from(reset(cons2[(A, B, C), D, (A, B, C, D)] {
       case ((a, b, c), d) => (a, b, c, d)
     }))
-  implicit def Tuple5Listable[A: Listable,
-                              B: Listable,
-                              C: Listable,
-                              D: Listable,
-                              E: Listable]: Listable[(A, B, C, D, E)] =
+  implicit def Tuple5Listable[A: Listable, B: Listable, C: Listable, D: Listable, E: Listable]
+    : Listable[(A, B, C, D, E)] =
     from(reset(cons2[(A, B, C, D), E, (A, B, C, D, E)] {
       case ((a, b, c, d), e) => (a, b, c, d, e)
     }))
@@ -133,14 +120,10 @@ object Listable {
     from(cons0[List[A]](Nil) \++/ cons2[A, List[A], List[A]](_ :: _))
 
   implicit def VectorListable[A: Listable]: Listable[Vector[A]] =
-    from(
-      cons0[Vector[A]](Vector.empty) \++/ cons2[A, Vector[A], Vector[A]](
-        _ +: _))
+    from(cons0[Vector[A]](Vector.empty) \++/ cons2[A, Vector[A], Vector[A]](_ +: _))
 
   implicit def StreamListable[A: Listable]: Listable[Stream[A]] =
-    from(
-      cons0[Stream[A]](Stream.empty) \++/ cons2[A, Stream[A], Stream[A]](
-        _ #:: _))
+    from(cons0[Stream[A]](Stream.empty) \++/ cons2[A, Stream[A], Stream[A]](_ #:: _))
 
   implicit def SetListable[A: Listable]: Listable[Set[A]] =
     from(setCons[A, Set[A]](_.toSet))
@@ -151,10 +134,8 @@ object Listable {
   //
   // Char & String:
 
-  implicit val CharListable: Listable[Char] = fromList(
-    ('a' to 'z') +| ('A' to 'Z') +| ('0' to '9'))
-  implicit val StringListable: Listable[String] = from(
-    tiers[List[Char]].map(_.mkString))
+  implicit val CharListable: Listable[Char]     = fromList(('a' to 'z') +| ('A' to 'Z') +| ('0' to '9'))
+  implicit val StringListable: Listable[String] = from(tiers[List[Char]].map(_.mkString))
 
   //
   // Function:
@@ -163,25 +144,15 @@ object Listable {
     from(tiers[R].map(x => () => x))
   implicit def Function1Listable[A: Listable, R: Listable]: Listable[A => R] =
     from(functionCons(TableFunction1[A, R]))
-  implicit def Function2Listable[A: Listable, B: Listable, R: Listable]
-    : Listable[(A, B) => R] = from(functionCons(TableFunction2[A, B, R]))
-  implicit def Function3Listable[A: Listable,
-                                 B: Listable,
-                                 C: Listable,
-                                 R: Listable]: Listable[(A, B, C) => R] =
+  implicit def Function2Listable[A: Listable, B: Listable, R: Listable]: Listable[(A, B) => R] =
+    from(functionCons(TableFunction2[A, B, R]))
+  implicit def Function3Listable[A: Listable, B: Listable, C: Listable, R: Listable]: Listable[(A, B, C) => R] =
     from(functionCons(TableFunction3[A, B, C, R]))
-  implicit def Function4Listable[A: Listable,
-                                 B: Listable,
-                                 C: Listable,
-                                 D: Listable,
-                                 R: Listable]: Listable[(A, B, C, D) => R] =
+  implicit def Function4Listable[A: Listable, B: Listable, C: Listable, D: Listable, R: Listable]
+    : Listable[(A, B, C, D) => R] =
     from(functionCons(TableFunction4[A, B, C, D, R]))
-  implicit def Function5Listable[A: Listable,
-                                 B: Listable,
-                                 C: Listable,
-                                 D: Listable,
-                                 E: Listable,
-                                 R: Listable]: Listable[(A, B, C, D, E) => R] =
+  implicit def Function5Listable[A: Listable, B: Listable, C: Listable, D: Listable, E: Listable, R: Listable]
+    : Listable[(A, B, C, D, E) => R] =
     from(functionCons(TableFunction5[A, B, C, D, E, R]))
 
   //

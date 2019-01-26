@@ -11,8 +11,7 @@ object Perspective extends PerspectiveImplicits {
 }
 
 private[magnolia] trait PerspectiveImplicits {
-  implicit def ListableInspectablePerspective[A: Listable: Inspectable]
-    : Perspective[A] =
+  implicit def ListableInspectablePerspective[A: Listable: Inspectable]: Perspective[A] =
     new Perspective[A] {
       val listable: Listable[A]       = Listable[A]
       val inspectable: Inspectable[A] = Inspectable[A]

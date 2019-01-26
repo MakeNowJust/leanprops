@@ -149,8 +149,7 @@ package object leanprops {
     }
   }
 
-  case class CheckError(message: String, counterExample: Seq[Seq[String]])
-      extends AssertionError(message)
+  case class CheckError(message: String, counterExample: Seq[Seq[String]]) extends AssertionError(message)
 
   /** Checks the given property and throws a `ChecksError` if counter examples are found.
     *
@@ -179,7 +178,5 @@ package object leanprops {
     }
   }
 
-  case class ChecksError(message: String,
-                         counterExamples: Seq[Seq[Seq[String]]])
-      extends AssertionError(message)
+  case class ChecksError(message: String, counterExamples: Seq[Seq[Seq[String]]]) extends AssertionError(message)
 }

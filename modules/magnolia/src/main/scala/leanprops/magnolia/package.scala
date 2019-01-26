@@ -17,8 +17,7 @@ package object magnolia extends PerspectiveImplicits {
         if (ctx.parameters.isEmpty) WithInspectConfig.pure(ctx.typeName.short)
         else {
           val ss =
-            ctx.parameters.map(p =>
-              p.typeclass.inspectable.inspect(p.dereference(v)))
+            ctx.parameters.map(p => p.typeclass.inspectable.inspect(p.dereference(v)))
           WithInspectConfig
             .sequence(ss)
             .map(_.mkString(ctx.typeName.short ++ "(", ", ", ")"))
