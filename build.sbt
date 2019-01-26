@@ -25,6 +25,7 @@ ThisBuild / scalacOptions ++= Seq(
   "-Ywarn-dead-code",
   "-Ywarn-numeric-widen",
   "-Ywarn-value-discard",
+  "-Ypartial-unification",
   "-Xfuture"
 )
 
@@ -35,7 +36,7 @@ lazy val testSettings = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(core, magnolia, docs)
+  .aggregate(core, magnolia, cats, docs)
   .settings(name := "leanprops")
 
 lazy val core = (project in file("modules/core"))
@@ -46,6 +47,16 @@ lazy val magnolia = (project in file("modules/magnolia"))
     name := "leanprops-magnolia",
     libraryDependencies += "com.propensive" %% "magnolia" % "0.10.0",
     testSettings
+  )
+  .dependsOn(core)
+
+lazy val cats = (project in file("modules/cats"))
+  .settings(
+    name := "leanprops-cats",
+    libraryDependencies += "org.typelevel" %% "cats-core" % "1.5.0",
+    testSettings,
+    libraryDependencies += "org.typelevel" %% "cats-laws" % "1.5.0" % Test,
+    libraryDependencies += "org.typelevel" %% "cats-testkit" % "1.5.0" % Test,
   )
   .dependsOn(core)
 
