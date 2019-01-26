@@ -11,7 +11,7 @@ jobs:
     - before_script:
         - cd website && yarn install --frozen-lockfile && cd ..
       script:
-        - sbt ++$TRAVIS_SCALA_VERSION scalafmt/test test:scalafmt/test sbt:scalafmt/test test
+        - sbt ++$TRAVIS_SCALA_VERSION scalafmt/test Test/scalafmt/test Sbt/scalafmt/test test
     - stage: release
       script:
         - sbt ++$TRAVIS_SCALA_VERSION docs/docusaurusPublishGhpages
