@@ -22,9 +22,7 @@ trait Inspectable[A] {
   def bindtiers(x: Try[A]): Tiers[Binding[WithInspectConfig[String]]]
 }
 
-object Inspectable
-    extends InspectableInstances
-    with InspectableFunctionInstance {
+object Inspectable extends InspectableInstances with InspectableFunctionInstance {
   import WithInspectConfig._
 
   /** `Binding` means a pair of input value and result. */
@@ -40,8 +38,7 @@ object Inspectable
     Inspectable[A].inspect(v)
 
   /** Returns bindings list. */
-  def bindings[A: Inspectable](
-      x: A): Stream[Binding[WithInspectConfig[String]]] =
+  def bindings[A: Inspectable](x: A): Stream[Binding[WithInspectConfig[String]]] =
     Inspectable[A].bindtiers(Success(x)).list
 }
 
@@ -78,8 +75,7 @@ private[leanprops] trait InspectableInstances {
       case Some(v) => cons1("Some", v)
       case None    => cons0("None")
     }
-  implicit def EitherInspectable[A: Inspectable, B: Inspectable]
-    : Inspectable[Either[A, B]] =
+  implicit def EitherInspectable[A: Inspectable, B: Inspectable]: Inspectable[Either[A, B]] =
     fromInspect {
       case Left(v)  => cons1("Left", v)
       case Right(v) => cons1("Right", v)
@@ -87,26 +83,19 @@ private[leanprops] trait InspectableInstances {
 
   implicit def Tuple1Inspectable[A: Inspectable]: Inspectable[Tuple1[A]] =
     fromInspect(a => cons1("Tuple1", a._1))
-  implicit def Tuple2Inspectable[A: Inspectable, B: Inspectable]
-    : Inspectable[(A, B)] = fromInspect {
+  implicit def Tuple2Inspectable[A: Inspectable, B: Inspectable]: Inspectable[(A, B)] = fromInspect {
     case (a, b) => cons2("", a, b)
   }
-  implicit def Tuple3Inspectable[A: Inspectable, B: Inspectable, C: Inspectable]
-    : Inspectable[(A, B, C)] = fromInspect {
+  implicit def Tuple3Inspectable[A: Inspectable, B: Inspectable, C: Inspectable]: Inspectable[(A, B, C)] = fromInspect {
     case (a, b, c) => cons3("", a, b, c)
   }
-  implicit def Tuple4Inspectable[A: Inspectable,
-                                 B: Inspectable,
-                                 C: Inspectable,
-                                 D: Inspectable]: Inspectable[(A, B, C, D)] =
+  implicit def Tuple4Inspectable[A: Inspectable, B: Inspectable, C: Inspectable, D: Inspectable]
+    : Inspectable[(A, B, C, D)] =
     fromInspect {
       case (a, b, c, d) => cons4("", a, b, c, d)
     }
-  implicit def Tuple5Inspectable[A: Inspectable,
-                                 B: Inspectable,
-                                 C: Inspectable,
-                                 D: Inspectable,
-                                 E: Inspectable]: Inspectable[(A, B, C, D, E)] =
+  implicit def Tuple5Inspectable[A: Inspectable, B: Inspectable, C: Inspectable, D: Inspectable, E: Inspectable]
+    : Inspectable[(A, B, C, D, E)] =
     fromInspect {
       case (a, b, c, d, e) => cons5("", a, b, c, d, e)
     }
@@ -129,11 +118,9 @@ private[leanprops] trait InspectableInstances {
     }
   implicit def SetInspectable[A: Inspectable]: Inspectable[Set[A]] =
     fromInspect(xs => inspects(xs.toSeq).map(_.mkString("Set(", ", ", ")")))
-  implicit def MapInspectable[A: Inspectable, B: Inspectable]
-    : Inspectable[Map[A, B]] =
+  implicit def MapInspectable[A: Inspectable, B: Inspectable]: Inspectable[Map[A, B]] =
     fromInspect { m =>
-      sequence(
-        m.map { case (x, y) => inspect2(x, y)((s, t) => s"$s -> $t") }.toSeq)
+      sequence(m.map { case (x, y) => inspect2(x, y)((s, t) => s"$s -> $t") }.toSeq)
         .map(_.mkString("Map(", ", ", ")"))
     }
 
@@ -154,8 +141,7 @@ private[leanprops] trait InspectableInstances {
         }
     }
 
-  implicit val CharInspectable: Inspectable[Char] = fromInspect(
-    c => pure(s"'${escapeChar(c, true)}'"))
+  implicit val CharInspectable: Inspectable[Char] = fromInspect(c => pure(s"'${escapeChar(c, true)}'"))
   implicit val StringInspectable: Inspectable[String] =
     fromInspect { s =>
       pure(s.iterator.map(escapeChar(_, false)).mkString("\"", "", "\""))
@@ -185,23 +171,20 @@ private[leanprops] trait InspectableFunctionInstance {
   import Listable._
 
   /** Creates `Inspectable` instance from `bindtiers` function. */
-  def fromBindtiers[A](
-      f: Try[A] => Tiers[Binding[WithInspectConfig[String]]]): Inspectable[A] =
+  def fromBindtiers[A](f: Try[A] => Tiers[Binding[WithInspectConfig[String]]]): Inspectable[A] =
     new Inspectable[A] { self =>
       def inspect(v: A): WithInspectConfig[String]                        = inspectFunction(v)(self)
       def bindtiers(x: Try[A]): Tiers[Binding[WithInspectConfig[String]]] = f(x)
     }
 
-  implicit def Function1Inspectable[A: Listable: Inspectable, R: Inspectable]
-    : Inspectable[A => R] =
+  implicit def Function1Inspectable[A: Listable: Inspectable, R: Inspectable]: Inspectable[A => R] =
     fromBindtiers(x =>
       tiers[A].flatMap(a =>
         Inspectable[R].bindtiers(x.map(f => f(a))).map {
           case Binding(vs, s) => Binding(Seq(inspect(a)) +: vs, s)
       }))
-  implicit def Function2Inspectable[A: Listable: Inspectable,
-                                    B: Listable: Inspectable,
-                                    R: Inspectable]: Inspectable[(A, B) => R] =
+  implicit def Function2Inspectable[A: Listable: Inspectable, B: Listable: Inspectable, R: Inspectable]
+    : Inspectable[(A, B) => R] =
     fromBindtiers { x =>
       tiers[(A, B)].flatMap {
         case (a, b) =>
@@ -213,8 +196,7 @@ private[leanprops] trait InspectableFunctionInstance {
   implicit def Function3Inspectable[A: Listable: Inspectable,
                                     B: Listable: Inspectable,
                                     C: Listable: Inspectable,
-                                    R: Inspectable]
-    : Inspectable[(A, B, C) => R] =
+                                    R: Inspectable]: Inspectable[(A, B, C) => R] =
     fromBindtiers { x =>
       tiers[(A, B, C)].flatMap {
         case (a, b, c) =>
@@ -228,15 +210,13 @@ private[leanprops] trait InspectableFunctionInstance {
                                     B: Listable: Inspectable,
                                     C: Listable: Inspectable,
                                     D: Listable: Inspectable,
-                                    R: Inspectable]
-    : Inspectable[(A, B, C, D) => R] =
+                                    R: Inspectable]: Inspectable[(A, B, C, D) => R] =
     fromBindtiers { x =>
       tiers[(A, B, C, D)].flatMap {
         case (a, b, c, d) =>
           Inspectable[R].bindtiers(x.map(f => f(a, b, c, d))).map {
             case Binding(vs, s) =>
-              Binding(Seq(inspect(a), inspect(b), inspect(c), inspect(d)) +: vs,
-                      s)
+              Binding(Seq(inspect(a), inspect(b), inspect(c), inspect(d)) +: vs, s)
           }
       }
     }
@@ -245,25 +225,18 @@ private[leanprops] trait InspectableFunctionInstance {
                                     C: Listable: Inspectable,
                                     D: Listable: Inspectable,
                                     E: Listable: Inspectable,
-                                    R: Inspectable]
-    : Inspectable[(A, B, C, D, E) => R] =
+                                    R: Inspectable]: Inspectable[(A, B, C, D, E) => R] =
     fromBindtiers { x =>
       tiers[(A, B, C, D, E)].flatMap {
         case (a, b, c, d, e) =>
           Inspectable[R].bindtiers(x.map(f => f(a, b, c, d, e))).map {
             case Binding(vs, s) =>
-              Binding(Seq(inspect(a),
-                          inspect(b),
-                          inspect(c),
-                          inspect(d),
-                          inspect(e)) +: vs,
-                      s)
+              Binding(Seq(inspect(a), inspect(b), inspect(c), inspect(d), inspect(e)) +: vs, s)
           }
       }
     }
 
-  private[this] def inspectFunction[F: Inspectable](
-      f: F): WithInspectConfig[String] =
+  private[this] def inspectFunction[F: Inspectable](f: F): WithInspectConfig[String] =
     for {
       config <- readConfig
       bs     <- inner(sequenceBindings(bindings(f))).map(_.toStream)
@@ -274,10 +247,7 @@ private[leanprops] trait InspectableFunctionInstance {
       else inspectPartialFunction(checks, config, bs)
     }
 
-  private[this] def inspectPartialFunction(
-      checks: Int,
-      config: InspectConfig,
-      bs: Stream[Binding[String]]): String = {
+  private[this] def inspectPartialFunction(checks: Int, config: InspectConfig, bs: Stream[Binding[String]]): String = {
     val InspectConfig(size, singleLine, _) = config
     val bs1                                = describeBindings(checks, size, bs)
     val (as, bs2)                          = clarifyBindings(bs1)
@@ -301,16 +271,13 @@ private[leanprops] trait InspectableFunctionInstance {
   //
   // Inspect function > binding utilities:
 
-  private[this] def removeMatchError(
-      bs: Seq[Binding[String]]): Seq[Binding[String]] =
+  private[this] def removeMatchError(bs: Seq[Binding[String]]): Seq[Binding[String]] =
     bs.filter {
       case Binding(_, Failure(e: MatchError)) => false
       case _                                  => true
     }
 
-  private[this] def inspectBindings(bs: Seq[Binding[String]],
-                                    more: Boolean,
-                                    singleLine: Boolean): Seq[String] = {
+  private[this] def inspectBindings(bs: Seq[Binding[String]], more: Boolean, singleLine: Boolean): Seq[String] = {
     val ss   = bs.map(inspectBinding)
     val last = if (more) Seq("...") else Seq.empty
     if (singleLine) ss.map { case (p, r) => p ++ r } ++ last
@@ -341,38 +308,29 @@ private[leanprops] trait InspectableFunctionInstance {
   private[this] def normalizeArguments(as: Seq[Seq[String]]): Seq[Seq[String]] =
     as.map(_.filter(_ != "_")).filter(_.nonEmpty)
 
-  private[this] def removeUnusedValues(
-      vs: Seq[Seq[String]],
-      used: Seq[Seq[Boolean]]): Seq[Seq[String]] =
+  private[this] def removeUnusedValues(vs: Seq[Seq[String]], used: Seq[Seq[Boolean]]): Seq[Seq[String]] =
     zip2(vs, used).map(_.filter(_._2)).filter(_.nonEmpty).map(_.map(_._1))
 
-  private[this] def zip2[A, B](xss: Seq[Seq[A]],
-                               yss: Seq[Seq[B]]): Seq[Seq[(A, B)]] =
+  private[this] def zip2[A, B](xss: Seq[Seq[A]], yss: Seq[Seq[B]]): Seq[Seq[(A, B)]] =
     zip2With(xss, yss)((_, _))
 
-  private[this] def zip2With[A, B, C](xss: Seq[Seq[A]], yss: Seq[Seq[B]])(
-      f: (A, B) => C): Seq[Seq[C]] =
+  private[this] def zip2With[A, B, C](xss: Seq[Seq[A]], yss: Seq[Seq[B]])(f: (A, B) => C): Seq[Seq[C]] =
     xss.zip(yss).map { case (xs, ys) => xs.zip(ys).map(tupled(f)) }
 
-  private[this] def checkUsedValues(
-      bs: Seq[Binding[String]]): Seq[Seq[Boolean]] =
+  private[this] def checkUsedValues(bs: Seq[Binding[String]]): Seq[Seq[Boolean]] =
     bs.map(_.values.map(_.map(_ != "_"))).reduceLeft(zip2With(_, _) { _ || _ })
 
-  private[this] def assignArgumentNames(
-      used: Seq[Seq[Boolean]]): Seq[Seq[String]] = {
+  private[this] def assignArgumentNames(used: Seq[Seq[Boolean]]): Seq[Seq[String]] = {
     def argumentNames: Stream[String] =
       Stream
         .from(0)
-        .flatMap(n =>
-          Seq("x", "y", "z", "w").map(s => if (n == 0) s else s"$s$n"))
+        .flatMap(n => Seq("x", "y", "z", "w").map(s => if (n == 0) s else s"$s$n"))
 
     def loop(as: Stream[String], used: Seq[Seq[Boolean]]): Seq[Seq[String]] =
       used match {
         case Seq() => Seq()
         case us +: uss =>
-          as.zip(us).map { case (a, u) => if (u) a else "_" } +: loop(
-            as.drop(us.count(identity)),
-            uss)
+          as.zip(us).map { case (a, u) => if (u) a else "_" } +: loop(as.drop(us.count(identity)), uss)
       }
 
     loop(argumentNames, used)
@@ -410,8 +368,7 @@ private[leanprops] trait InspectableFunctionInstance {
   //
   // Inspect function > clarify:
 
-  private[this] def clarifyBindings(
-      bs: Seq[Binding[String]]): (Seq[Seq[String]], Seq[Binding[String]]) = {
+  private[this] def clarifyBindings(bs: Seq[Binding[String]]): (Seq[Seq[String]], Seq[Binding[String]]) = {
     val used = checkUsedValues(bs)
     (assignArgumentNames(used), bs.map {
       case Binding(vs, r) => Binding(removeUnusedValues(vs, used), r)
@@ -421,10 +378,7 @@ private[leanprops] trait InspectableFunctionInstance {
   //
   // Inspect function > describe:
 
-  private[this] def describeBindings(
-      m: Int,
-      n: Int,
-      bs: Stream[Binding[String]]): Seq[Binding[String]] = {
+  private[this] def describeBindings(m: Int, n: Int, bs: Stream[Binding[String]]): Seq[Binding[String]] = {
     val bs0 = bs.take(m)
     val bs1 = Seq(
       bs0,
@@ -443,10 +397,8 @@ private[leanprops] trait InspectableFunctionInstance {
   //
   // Inspect function > explain:
 
-  private[this] def explainBindings(
-      bs: Seq[Binding[String]]): Seq[Binding[String]] = {
-    @tailrec def explain(rs: Seq[Binding[String]],
-                         bs: Seq[Binding[String]]): Seq[Binding[String]] =
+  private[this] def explainBindings(bs: Seq[Binding[String]]): Seq[Binding[String]] = {
+    @tailrec def explain(rs: Seq[Binding[String]], bs: Seq[Binding[String]]): Seq[Binding[String]] =
       bs match {
         case Seq() => rs.reverse
         case Binding(vs, r) +: bs1 => {
@@ -466,8 +418,7 @@ private[leanprops] trait InspectableFunctionInstance {
     explain(Seq.empty, bs)
   }
 
-  private[this] def generalizations(
-      vs: Seq[Seq[String]]): Seq[Seq[Seq[String]]] = vs match {
+  private[this] def generalizations(vs: Seq[Seq[String]]): Seq[Seq[Seq[String]]] = vs match {
     case Seq()       => Seq(Seq.empty)
     case Seq() +: ws => generalizations(ws).map(Seq.empty +: _)
     case (x +: xs) +: ws =>
@@ -480,8 +431,7 @@ private[leanprops] trait InspectableFunctionInstance {
   private[this] def covered(b: Binding[String], c: Binding[String]): Boolean =
     coveredValues(b.values, c.values) && coveredResult(b.result, c.result)
 
-  private[this] def coveredValues(vs: Seq[Seq[String]],
-                                  ws: Seq[Seq[String]]): Boolean = {
+  private[this] def coveredValues(vs: Seq[Seq[String]], ws: Seq[Seq[String]]): Boolean = {
     @tailrec def check(v: Seq[String], w: Seq[String]): Boolean = (v, w) match {
       case (Seq(), Seq())       => true
       case (_ +: xs, "_" +: ys) => check(xs, ys)
@@ -500,8 +450,7 @@ private[leanprops] trait InspectableFunctionInstance {
       case _ => false
     }
 
-  private[this] def resultSimplify(
-      x: Try[String]): Either[(Class[_], String), String] = x match {
+  private[this] def resultSimplify(x: Try[String]): Either[(Class[_], String), String] = x match {
     case Success(s) => Right(s)
     case Failure(e) => Left((e.getClass, e.getMessage))
   }

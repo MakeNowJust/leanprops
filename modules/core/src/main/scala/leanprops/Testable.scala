@@ -21,8 +21,7 @@ object Testable {
   }
 
   /** Creates `Testable` instance from `resultiers` function. */
-  def from[P](
-      f: Try[P] => Tiers[Result[WithInspectConfig[String]]]): Testable[P] =
+  def from[P](f: Try[P] => Tiers[Result[WithInspectConfig[String]]]): Testable[P] =
     new Testable[P] {
       def resultiers(x: Try[P]): Tiers[Result[WithInspectConfig[String]]] = f(x)
     }
@@ -34,8 +33,7 @@ object Testable {
   def results[P: Testable](p: P): Seq[Result[WithInspectConfig[String]]] =
     Testable[P].resultiers(Success(p)).list
 
-  implicit val BooleanTestable: Testable[Boolean] = from(
-    x => cons0(Result(Seq.empty, x)))
+  implicit val BooleanTestable: Testable[Boolean] = from(x => cons0(Result(Seq.empty, x)))
 
   implicit def Function0Testable[P: Testable]: Testable[() => P] =
     from(x =>
@@ -43,17 +41,15 @@ object Testable {
         case Result(vs, r) => Result(Seq.empty +: vs, r)
     })
 
-  implicit def Function1Testable[A: Listable: Inspectable, P: Testable]
-    : Testable[A => P] =
+  implicit def Function1Testable[A: Listable: Inspectable, P: Testable]: Testable[A => P] =
     from(x =>
       tiers[A].flatMap(a =>
         Testable[P].resultiers(x.map(p => p(a))).map {
           case Result(vs, r) => Result(Seq(inspect(a)) +: vs, r)
       }))
 
-  implicit def Function2Testable[A: Listable: Inspectable,
-                                 B: Listable: Inspectable,
-                                 P: Testable]: Testable[(A, B) => P] =
+  implicit def Function2Testable[A: Listable: Inspectable, B: Listable: Inspectable, P: Testable]
+    : Testable[(A, B) => P] =
     from { x =>
       tiers[(A, B)].flatMap {
         case (a, b) =>
@@ -87,8 +83,7 @@ object Testable {
         case (a, b, c, d) =>
           Testable[P].resultiers(x.map(p => p(a, b, c, d))).map {
             case Result(ss, r) =>
-              Result(Seq(inspect(a), inspect(b), inspect(c), inspect(d)) +: ss,
-                     r)
+              Result(Seq(inspect(a), inspect(b), inspect(c), inspect(d)) +: ss, r)
           }
       }
     }
@@ -104,12 +99,7 @@ object Testable {
         case (a, b, c, d, e) =>
           Testable[P].resultiers(x.map(p => p(a, b, c, d, e))).map {
             case Result(ss, r) =>
-              Result(Seq(inspect(a),
-                         inspect(b),
-                         inspect(c),
-                         inspect(d),
-                         inspect(e)) +: ss,
-                     r)
+              Result(Seq(inspect(a), inspect(b), inspect(c), inspect(d), inspect(e)) +: ss, r)
           }
       }
     }

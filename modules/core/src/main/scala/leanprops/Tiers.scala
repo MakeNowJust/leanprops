@@ -8,8 +8,7 @@ package leanprops
   *   - `Tiers.from`,
   *   - `Tiers.of` and `Tiers.cons0`
   */
-final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]])
-    extends AnyVal { self =>
+final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]]) extends AnyVal { self =>
   import Tiers._
 
   /** Returns the flatten tiers. */
@@ -36,7 +35,7 @@ final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]])
   /** Drops the first tier. */
   def tail: Tiers[A] = from(self.asStream.tail)
 
-  /** Drops thee last tier. */
+  /** Drops the last tier. */
   def init: Tiers[A] = from(self.asStream.init)
 
   //
@@ -161,8 +160,7 @@ final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]])
           y <- ys
         } yield f(x, y)
 
-      that.mapTier(product(self.head, _)) \++/ delay(
-        self.tail.productWith(that)(f))
+      that.mapTier(product(self.head, _)) \++/ delay(self.tail.productWith(that)(f))
     }
 
   /** Take a tiered product of lists of tiers. */
@@ -311,25 +309,21 @@ object Tiers {
     delay(Listable[(A, B)].tiers.map(tupled(f)))
 
   /** Returns tiers of applications of a 3-argument constructor. */
-  def cons3[A: Listable, B: Listable, C: Listable, R](
-      f: (A, B, C) => R): Tiers[R] =
+  def cons3[A: Listable, B: Listable, C: Listable, R](f: (A, B, C) => R): Tiers[R] =
     delay(Listable[(A, B, C)].tiers.map(tupled(f)))
 
   /** Returns tiers of applications of a 4-argument constructor. */
-  def cons4[A: Listable, B: Listable, C: Listable, D: Listable, R](
-      f: (A, B, C, D) => R): Tiers[R] =
+  def cons4[A: Listable, B: Listable, C: Listable, D: Listable, R](f: (A, B, C, D) => R): Tiers[R] =
     delay(Listable[(A, B, C, D)].tiers.map(tupled(f)))
 
   /** Returns tiers of applications of a 5-argument constructor. */
-  def cons5[A: Listable, B: Listable, C: Listable, D: Listable, E: Listable, R](
-      f: (A, B, C, D, E) => R): Tiers[R] =
+  def cons5[A: Listable, B: Listable, C: Listable, D: Listable, E: Listable, R](f: (A, B, C, D, E) => R): Tiers[R] =
     delay(Listable[(A, B, C, D, E)].tiers.map(tupled(f)))
 
   /** Takes as argument tiers of element values;
     * returns tiers of size-ordered lists of elements without repetition. */
   def setOf[A](t: Tiers[A]): Tiers[Seq[A]] =
-    from(Seq(Seq.empty) #:: flatten(t.setChoiceWith((x, xss) =>
-      setOf(xss).map(x +: _))).asStream)
+    from(Seq(Seq.empty) #:: t.setChoiceWith((x, xss) => setOf(xss).map(x +: _)).flattenT.asStream)
 
   /** Given a constructor that takes a set of elements (as a list),
     * lists tiers of applications of this constructor. */
