@@ -50,7 +50,7 @@ private[leanprops] trait InspectableInstances {
     new Inspectable[A] {
       def inspect(v: A): WithInspectConfig[String] = f(v)
       def bindtiers(x: Try[A]): Tiers[Binding[WithInspectConfig[String]]] =
-        Tiers.of(Binding(Seq.empty, x match {
+        Tiers.cons0(Binding(Seq.empty, x match {
           case Success(v) => Success(inspect(v))
           case Failure(e) => Failure(e)
         }))
@@ -179,14 +179,14 @@ private[leanprops] trait InspectableFunctionInstance {
 
   implicit def Function1Inspectable[A: Listable: Inspectable, R: Inspectable]: Inspectable[A => R] =
     fromBindtiers(x =>
-      tiers[A].flatMap(a =>
+      tiers[A].flatMapT(a =>
         Inspectable[R].bindtiers(x.map(f => f(a))).map {
           case Binding(vs, s) => Binding(Seq(inspect(a)) +: vs, s)
       }))
   implicit def Function2Inspectable[A: Listable: Inspectable, B: Listable: Inspectable, R: Inspectable]
     : Inspectable[(A, B) => R] =
     fromBindtiers { x =>
-      tiers[(A, B)].flatMap {
+      tiers[(A, B)].flatMapT {
         case (a, b) =>
           Inspectable[R].bindtiers(x.map(f => f(a, b))).map {
             case Binding(vs, s) => Binding(Seq(inspect(a), inspect(b)) +: vs, s)
@@ -198,7 +198,7 @@ private[leanprops] trait InspectableFunctionInstance {
                                     C: Listable: Inspectable,
                                     R: Inspectable]: Inspectable[(A, B, C) => R] =
     fromBindtiers { x =>
-      tiers[(A, B, C)].flatMap {
+      tiers[(A, B, C)].flatMapT {
         case (a, b, c) =>
           Inspectable[R].bindtiers(x.map(f => f(a, b, c))).map {
             case Binding(vs, s) =>
@@ -212,7 +212,7 @@ private[leanprops] trait InspectableFunctionInstance {
                                     D: Listable: Inspectable,
                                     R: Inspectable]: Inspectable[(A, B, C, D) => R] =
     fromBindtiers { x =>
-      tiers[(A, B, C, D)].flatMap {
+      tiers[(A, B, C, D)].flatMapT {
         case (a, b, c, d) =>
           Inspectable[R].bindtiers(x.map(f => f(a, b, c, d))).map {
             case Binding(vs, s) =>
@@ -227,7 +227,7 @@ private[leanprops] trait InspectableFunctionInstance {
                                     E: Listable: Inspectable,
                                     R: Inspectable]: Inspectable[(A, B, C, D, E) => R] =
     fromBindtiers { x =>
-      tiers[(A, B, C, D, E)].flatMap {
+      tiers[(A, B, C, D, E)].flatMapT {
         case (a, b, c, d, e) =>
           Inspectable[R].bindtiers(x.map(f => f(a, b, c, d, e))).map {
             case Binding(vs, s) =>

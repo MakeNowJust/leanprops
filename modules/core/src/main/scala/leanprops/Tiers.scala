@@ -51,7 +51,7 @@ final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]]) extends AnyV
     *
     * {{{
     * scala> Tiers.fromList(1 to 3).map(_ + 1)
-    * res0: Tiers[Int] = Tiers(List(2), List(3), List(4))
+    * res0: Tiers[Int] = Tiers(Seq(2), Seq(3), Seq(4))
     * }}}
     */
   def map[B](f: A => B): Tiers[B] = from(self.asStream.map(_.map(f)))
@@ -60,7 +60,7 @@ final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]]) extends AnyV
     *
     * {{{
     * scala> Tiers.fromList(1 to 3).filter(_ % 2 == 0)
-    * res0: Tiers[Int] = Tiers(List(), List(2), List())
+    * res0: Tiers[Int] = Tiers(Seq(), Seq(2), Seq())
     * }}}
     */
   def filter(f: A => Boolean): Tiers[A] = from(self.asStream.map(_.filter(f)))
@@ -71,16 +71,25 @@ final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]]) extends AnyV
     * scala> import Tiers._
     * import Tiers._
     *
-    * scala> Tiers.fromList(1 to 3).flatMap(cons0)
-    * res0: Tiers[Int] = Tiers(List(1), List(2), List(3))
+    * scala> Tiers.fromList(1 to 3).flatMapT(cons0)
+    * res0: Tiers[Int] = Tiers(Seq(1), Seq(2), Seq(3))
     *
     * scala> holds(100) { (t: Tiers[Tiers[Int]]) =>
-    *      |   t.flatMap(identity) == flatten(t)
+    *      |   t.flatMapT(identity) == t.flattenT
     *      | }
     * res1: Boolean = true
     * }}}
     */
-  def flatMap[B](f: A => Tiers[B]): Tiers[B] = flatten(self.map(f))
+  def flatMapT[B](f: A => Tiers[B]): Tiers[B] = self.map(f).flattenT
+
+  /** `flatten` this tiers. */
+  def flattenT[B](implicit ev: A <:< Tiers[B]): Tiers[B] = {
+    def loop(st: Stream[Tiers[B]]): Tiers[B] =
+      if (st.isEmpty) Tiers.empty
+      else st.head \++/ delay(loop(st.tail))
+
+    loop(self.map(ev).asStream.map(_.foldLeft(Tiers.empty[B])(_ \++/ _)))
+  }
 
   //
   // Merge combinator:
@@ -91,8 +100,8 @@ final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]]) extends AnyV
     * scala> import Tiers._
     * import Tiers._
     *
-    * scala> Tiers.of(1 to 10: _*).mergeWith(Tiers.of(5 to 15: _*))(_ intersect _)
-    * res0: Tiers[Int] = Tiers(List(5, 6, 7, 8, 9, 10))
+    * scala> Tiers(1 to 10).mergeWith(Tiers(5 to 15))(_ intersect _)
+    * res0: Tiers[Int] = Tiers(Seq(5, 6, 7, 8, 9, 10))
     * }}}
     *
     * `\++/` and `\+|/` can be defined by this method.
@@ -122,7 +131,7 @@ final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]]) extends AnyV
     *
     * {{{
     * scala> Tiers.fromList(1 to 3) \++/ Tiers.fromList(4 to 6)
-    * res0: Tiers[Int] = Tiers(List(1, 4), List(2, 5), List(3, 6))
+    * res0: Tiers[Int] = Tiers(Seq(1, 4), Seq(2, 5), Seq(3, 6))
     * }}}
     */
   def \++/(that: Tiers[A]): Tiers[A] = self.mergeWith(that)(_ ++ _)
@@ -130,8 +139,8 @@ final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]]) extends AnyV
   /** Merges two tiers by `+|`.
     *
     * {{{
-    * scala> Tiers.of(1 to 3: _*) \+|/ Tiers.of(4 to 6: _*)
-    * res0: Tiers[Int] = Tiers(List(1, 4, 2, 5, 3, 6))
+    * scala> Tiers(1 to 3) \+|/ Tiers(4 to 6)
+    * res0: Tiers[Int] = Tiers(Seq(1, 4, 2, 5, 3, 6))
     * }}}
     */
   def \+|/(that: Tiers[A]): Tiers[A] = self.mergeWith(that)(_ +| _)
@@ -143,7 +152,7 @@ final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]]) extends AnyV
     *
     * {{{
     * scala> Tiers.fromList(1 to 3).productWith(Tiers.fromList(11 to 13))((_, _))
-    * res0: Tiers[(Int, Int)] = Tiers(List((1,11)), List((1,12), (2,11)), List((1,13), (2,12), (3,11)), List((2,13), (3,12)), List((3,13)))
+    * res0: Tiers[(Int, Int)] = Tiers(Seq((1,11)), Seq((1,12), (2,11)), Seq((1,13), (2,12), (3,11)), Seq((2,13), (3,12)), Seq((3,13)))
     *
     * scala> holds(100) { (t: Tiers[Int], u: Tiers[Int]) =>
     *      |   t.productWith(u)((_, _)) == (t >< u)
@@ -173,8 +182,8 @@ final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]]) extends AnyV
     * Choices are pairs of values and tiers excluding that value.
     *
     * {{{
-    * scala> Tiers.of(true, false).choice
-    * res0: Tiers[(Boolean, Tiers[Boolean])] = Tiers(List((true,Tiers(List(false)))), List((false,Tiers(List(true)))))
+    * scala> Tiers(Seq(true, false)).choice
+    * res0: Tiers[(Boolean, Tiers[Boolean])] = Tiers(Seq((true,Tiers(Seq(false)))), Seq((false,Tiers(Seq(true)))))
     * }}}
     */
   def choice: Tiers[(A, Tiers[A])] = self.choiceWith((_, _))
@@ -236,7 +245,7 @@ final case class Tiers[A] private[Tiers] (asStream: Stream[Seq[A]]) extends AnyV
     val more = if (self.asStream.drop(n).nonEmpty) ", ..." else ""
     self.asStream
       .take(n)
-      .map(_.toList.toString)
+      .map(_.toList.mkString("Seq(", ", ", ")"))
       .mkString("Tiers(", ", ", more ++ ")")
   }
 }
@@ -261,23 +270,12 @@ object Tiers {
 
   def apply[A](s: Seq[A]*): Tiers[A] = from(s.toStream)
 
-  /** Returns a `Tiers` which have only tier containing the given values.
-    *
-    * Ideally, it means variadic arguments version of `cons0`.
-    *
-    * {{{
-    * scala> Tiers.of(1 to 3: _*)
-    * res0: Tiers[Int] = Tiers(List(1, 2, 3))
-    * }}}
-    */
-  def of[A](xs: A*): Tiers[A] = from(Stream(xs))
-
   /** Takes a list of values and transform it into tiers on which each
     * tier is occupied by a single element.
     *
     * {{{
     * scala> Tiers.fromList(1 to 3)
-    * res0: Tiers[Int] = Tiers(List(1), List(2), List(3))
+    * res0: Tiers[Int] = Tiers(Seq(1), Seq(2), Seq(3))
     * }}}
     */
   def fromList[A](xs: Seq[A]): Tiers[A] = from(xs.toStream.map(Seq(_)))
@@ -287,10 +285,10 @@ object Tiers {
     *
     * {{{
     * scala> Tiers.cons0[Int](0)
-    * res0: Tiers[Int] = Tiers(List(0))
+    * res0: Tiers[Int] = Tiers(Seq(0))
     * }}}
     */
-  def cons0[A](x: A): Tiers[A] = of(x)
+  def cons0[A](x: A): Tiers[A] = Tiers(Seq(x))
 
   /** Given a constructor with one `Listable` argument,
     * returns `Tiers` of all possible applications of this constructor.
@@ -298,7 +296,7 @@ object Tiers {
     *
     * {{{
     * scala> Tiers.cons1[Boolean, Option[Boolean]](Some(_))
-    * res0: Tiers[Option[Boolean]] = Tiers(List(), List(Some(true), Some(false)))
+    * res0: Tiers[Option[Boolean]] = Tiers(Seq(), Seq(Some(true), Some(false)))
     * }}}
     */
   def cons1[A: Listable, R](f: A => R): Tiers[R] =
@@ -334,7 +332,7 @@ object Tiers {
     * returns tiers of maps from the source to the target encoded as lists
     * without repetition.  */
   def mapOf[A, B](t: Tiers[A], u: Tiers[B]): Tiers[Seq[(A, B)]] =
-    setOf(t).flatMap(xs => products(xs.map(const(u)): _*).map(xs.zip(_)))
+    setOf(t).flatMapT(xs => products(xs.map(const(u)): _*).map(xs.zip(_)))
 
   /** Given a constructor that takes a map of elements (as a list),
     * lists tiers of applications of this constructor. */
@@ -345,30 +343,17 @@ object Tiers {
     * returns tiers of pair of partial relation map and fallback value. */
   def functionOf[A, R](t: Tiers[A], u: Tiers[R]): Tiers[(Map[A, R], R)] = {
     def exceptionPairsOf(t: Tiers[A], u: Tiers[R]): Tiers[Seq[(A, R)]] =
-      setOf(t).init.flatMap(xs => products(xs.map(const(u)): _*).map(xs.zip(_)))
+      setOf(t).init.flatMapT(xs => products(xs.map(const(u)): _*).map(xs.zip(_)))
 
-    u.choice.flatMap {
+    u.choice.flatMapT {
       case (r, yss) => exceptionPairsOf(t, yss).map(zs => (zs.toMap, r))
     }
   }
 
   /** Given a constructor that takes partial relation (as a map) and fallback value,
     * lists tiers of applications of this constructor. */
-  def functionCons[A: Listable, R: Listable, C](
-      f: (Map[A, R], R) => C): Tiers[C] =
+  def functionCons[A: Listable, R: Listable, C](f: (Map[A, R], R) => C): Tiers[C] =
     functionOf(Listable[A].tiers, Listable[R].tiers).map(tupled(f))
-
-  //
-  // General combinator:
-
-  /** `flatten` the given tiers. */
-  def flatten[A](tt: Tiers[Tiers[A]]): Tiers[A] = {
-    def loop(st: Stream[Tiers[A]]): Tiers[A] =
-      if (st.isEmpty) Tiers.empty
-      else st.head \++/ delay(loop(st.tail))
-
-    loop(tt.asStream.map(_.foldLeft(Tiers.empty[A])(_ \++/ _)))
-  }
 
   //
   // Product combinator:
@@ -383,7 +368,7 @@ object Tiers {
     * import Tiers._
     *
     * scala> products(fromList(1 to 2), fromList(11 to 12))
-    * res1: Tiers[Seq[Int]] = Tiers(List(List(1, 11)), List(List(1, 12), List(2, 11)), List(List(2, 12)))
+    * res1: Tiers[Seq[Int]] = Tiers(Seq(List(1, 11)), Seq(List(1, 12), List(2, 11)), Seq(List(2, 12)))
     * }}}
     */
   def products[A](ts: Tiers[A]*): Tiers[Seq[A]] =

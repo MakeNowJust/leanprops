@@ -43,7 +43,7 @@ object Testable {
 
   implicit def Function1Testable[A: Listable: Inspectable, P: Testable]: Testable[A => P] =
     from(x =>
-      tiers[A].flatMap(a =>
+      tiers[A].flatMapT(a =>
         Testable[P].resultiers(x.map(p => p(a))).map {
           case Result(vs, r) => Result(Seq(inspect(a)) +: vs, r)
       }))
@@ -51,7 +51,7 @@ object Testable {
   implicit def Function2Testable[A: Listable: Inspectable, B: Listable: Inspectable, P: Testable]
     : Testable[(A, B) => P] =
     from { x =>
-      tiers[(A, B)].flatMap {
+      tiers[(A, B)].flatMapT {
         case (a, b) =>
           Testable[P].resultiers(x.map(p => p(a, b))).map {
             case Result(vs, r) => Result(Seq(inspect(a), inspect(b)) +: vs, r)
@@ -64,7 +64,7 @@ object Testable {
                                  C: Listable: Inspectable,
                                  P: Testable]: Testable[(A, B, C) => P] =
     from { x =>
-      tiers[(A, B, C)].flatMap {
+      tiers[(A, B, C)].flatMapT {
         case (a, b, c) =>
           Testable[P].resultiers(x.map(p => p(a, b, c))).map {
             case Result(vs, r) =>
@@ -79,7 +79,7 @@ object Testable {
                                  D: Listable: Inspectable,
                                  P: Testable]: Testable[(A, B, C, D) => P] =
     from { x =>
-      tiers[(A, B, C, D)].flatMap {
+      tiers[(A, B, C, D)].flatMapT {
         case (a, b, c, d) =>
           Testable[P].resultiers(x.map(p => p(a, b, c, d))).map {
             case Result(ss, r) =>
@@ -95,7 +95,7 @@ object Testable {
                                  E: Listable: Inspectable,
                                  P: Testable]: Testable[(A, B, C, D, E) => P] =
     from { x =>
-      tiers[(A, B, C, D, E)].flatMap {
+      tiers[(A, B, C, D, E)].flatMapT {
         case (a, b, c, d, e) =>
           Testable[P].resultiers(x.map(p => p(a, b, c, d, e))).map {
             case Result(ss, r) =>
